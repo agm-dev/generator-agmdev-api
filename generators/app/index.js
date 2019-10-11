@@ -4,39 +4,36 @@ const chalk = require("chalk");
 const yosay = require("yosay");
 
 module.exports = class extends Generator {
-  prompting() {
-    // Have Yeoman greet the user.
-    this.log(
-      yosay(
-        `Welcome to the wonderful ${chalk.red(
-          "generator-agmdev-api"
-        )} generator!`
-      )
+  initializing() {
+    this.composeWith(
+      require.resolve("generator-agmdev-barebone/generators/app"),
+      { name: "agmdev-api" }
     );
-
-    const prompts = [
-      {
-        type: "confirm",
-        name: "someAnswer",
-        message: "Would you like to enable this option?",
-        default: true
-      }
-    ];
-
-    return this.prompt(prompts).then(props => {
-      // To access props later use this.props.someAnswer;
-      this.props = props;
-    });
   }
+
+  prompting() {}
 
   writing() {
+    const configPath = "src/config";
+    const server = "server.js";
     this.fs.copy(
-      this.templatePath("dummyfile.txt"),
-      this.destinationPath("dummyfile.txt")
+      this.templatePath(server),
+      this.destinationPath(`${configPath}/${server}`)
+    );
+    const vars = "vars.js";
+    this.fs.copy(
+      this.templatePath(vars),
+      this.destinationPath(`${configPath}/${vars}`)
+    );
+    this.fs.copy(
+      this.templatePath("config.index.js"),
+      this.destinationPath(`${configPath}/index.js`)
     );
   }
 
-  install() {
-    this.installDependencies();
+  install() {}
+
+  end() {
+    this.log("This would be the API generator");
   }
 };
